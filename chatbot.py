@@ -106,3 +106,42 @@ for token in tokens:
     questionsword2int[token] = len(questionsword2int) - 1
 for token in tokens:
     answersword2int[token] = len(answersword2int) - 1
+
+# Creating the inverse dictionary of the answerword2int dictionary
+
+answersints2words = {w_i: w for w, w_i in answersword2int.items()}
+
+# Adding the end of the string token to the end of every answer
+for i in range(len(clean_answers)):
+    clean_answers[i] += ' <EOS> '
+
+# translating all the questions and the answers into integers
+# and replacing all the words that were filtered out by <OUT>
+questions_to_int = []
+for question in clean_questions:
+    ints = []
+    for word in question.split():
+        if word not in questionsword2int:
+            ints.append(questionsword2int['<OUT>'])
+        else:
+            ints.append(questionsword2int[word])
+        questions_to_int.append(ints)
+answers_to_int = []
+for answer in clean_answers:
+    ints = []
+    for word in answer.split():
+        if word not in answersword2int:
+            ints.append(answersword2int['<OUT>'])
+        else:
+            ints.append(answersword2int[word])
+        questions_to_int.append(ints)
+
+# Sorting questions and answers by the length of the questions
+
+sorted_clean_questions = []
+sorted_clean_answers = []
+for length in range(1, 25 + 1):
+    for i in enumerate(questions_to_int):
+        if len(i[1]) == length:
+            sorted_clean_questions.append(questions_to_int[i[0]])
+            sorted_clean_answers.append(answers_to_int[i[0]])
