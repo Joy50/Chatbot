@@ -6,10 +6,7 @@ This is a temporary script file.
 """
 
 #import library
-import numpy as np
-import tensorflow as tf
 import re
-import time
 
 #import dataset
 lines=open('movie_lines.txt',encoding='utf-8',errors='ignore').read().split('\n')
@@ -86,3 +83,26 @@ for an in clean_questions:
             word2count[word]=1
         else:
             word2count[word]+=1
+
+# Creating two dictonaries that map the questions and the answers words to a unique integer
+
+threshold = 20
+questionsword2int = {}
+word_number = 0
+for word, count in word2count.items():
+    if count >= threshold:
+        questionsword2int[word] = word_number
+        word_number += 1
+answersword2int = {}
+word_number = 0
+for word, count in word2count.items():
+    if count >= threshold:
+        answersword2int[word] = word_number
+        word_number += 1
+
+# Adding the last tokens to these dictionaries
+tokens = ['<PAD>', '<EOS>', '<OUT>', '<SOS>']
+for token in tokens:
+    questionsword2int[token] = len(questionsword2int) - 1
+for token in tokens:
+    answersword2int[token] = len(answersword2int) - 1
